@@ -20,16 +20,35 @@ const userSchema = new mongoose.Schema({
 	email: String,
 	password: String,
 });
-//get method
-app.get("/", (req, res) => {
+//==MOdel(collection)
+const User = mongoose.model("User", userSchema);
+//home page route
+app.route("/").get((req, res) => {
 	res.render("home");
 });
-app.get("/login", (req, res) => {
+//login page route
+app.route("/login").get((req, res) => {
 	res.render("login");
 });
-app.get("/register", (req, res) => {
-	res.render("register");
-});
+//register page route
+app
+	.route("/register")
+	.get((req, res) => {
+		res.render("register");
+	})
+	.post((res, req) => {
+		const newUser = new User({
+			email: req.body.username,
+			password: req.body.password,
+		});
+		newUser.save((err) => {
+			if (!err) {
+				res.send("New user created in DB");
+			} else {
+				res.send(err);
+			}
+		});
+	});
 app.listen(port, () => {
 	console.log(`Server is up! Local Port: ${port}!`);
 });
