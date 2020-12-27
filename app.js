@@ -43,7 +43,7 @@ app
 		});
 		newUser.save((err) => {
 			if (!err) {
-				res.send("New user created in DB");
+				res.render("secrets");
 			} else {
 				res.send(err);
 			}
