@@ -33,6 +33,25 @@ const User = mongoose.model("User", userSchema);
 app.route("/").get((req, res) => {
 	res.render("home");
 });
+//register page route
+app
+	.route("/register")
+	.get((req, res) => {
+		res.render("register");
+	})
+	.post((req, res) => {
+		const newUser = new User({
+			email: req.body.username,
+			password: req.body.password,
+		});
+		newUser.save((err) => {
+			if (!err) {
+				res.render("secrets");
+			} else {
+				res.send(err);
+			}
+		});
+	});
 //login page route
 app
 	.route("/login")
@@ -55,25 +74,7 @@ app
 			}
 		});
 	});
-//register page route
-app
-	.route("/register")
-	.get((req, res) => {
-		res.render("register");
-	})
-	.post((req, res) => {
-		const newUser = new User({
-			email: req.body.username,
-			password: req.body.password,
-		});
-		newUser.save((err) => {
-			if (!err) {
-				res.render("secrets");
-			} else {
-				res.send(err);
-			}
-		});
-	});
+
 app.listen(port, () => {
 	console.log(`Server is up! Local Port: ${port}!`);
 });
