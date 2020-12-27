@@ -12,7 +12,7 @@ app.use(express.static("public"));
 //==Mongoose Connection
 
 mongoose.connect(
-	"mongodb+srv://admin:admin413@cluster0.hgnmf.mongodb.net/secretsDB",
+	"mongodb+srv://admin:admin413@cluster0.hgnmf.mongodb.net/userDB",
 	{ useNewUrlParser: true, useUnifiedTopology: true }
 );
 //==DB scehma
@@ -27,16 +27,34 @@ app.route("/").get((req, res) => {
 	res.render("home");
 });
 //login page route
-app.route("/login").get((req, res) => {
-	res.render("login");
-});
+app
+	.route("/login")
+	.get((req, res) => {
+		res.render("login");
+	})
+	.post((req, res) => {
+		const username = req.body.username;
+		const password = req.body.password;
+		//find query
+		User.findOne({ email: username }, (err, foundUser) => {
+			if (!err) {
+				if (foundUser) {
+					if (foundUser.password === password) {
+						res.render("secrets");
+					}
+				}
+			} else {
+				console.log(err);
+			}
+		});
+	});
 //register page route
 app
 	.route("/register")
 	.get((req, res) => {
 		res.render("register");
 	})
-	.post((res, req) => {
+	.post((req, res) => {
 		const newUser = new User({
 			email: req.body.username,
 			password: req.body.password,
