@@ -12,4 +12,4 @@ Learning authentication and encryption
 
 ##### Deployed in Heroku
 
-##### [Live Link]()
+##### [Live Link](https://ng-secret.herokuapp.com/login)
