@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -22,7 +23,6 @@ const userSchema = new mongoose.Schema({
 	password: String,
 });
 //Mongoose Encryption
-const secret = "Thisisourlittlesecret.";
 //add the plugin to the userschema
 //encryped field only encrypts password so we dont have trouble looking up email
 userSchema.plugin(encrypt, { secret: secret, encryptedFields: ["password"] });
