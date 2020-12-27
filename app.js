@@ -25,7 +25,10 @@ const userSchema = new mongoose.Schema({
 //Mongoose Encryption
 //add the plugin to the userschema
 //encryped field only encrypts password so we dont have trouble looking up email
-userSchema.plugin(encrypt, { secret: secret, encryptedFields: ["password"] });
+userSchema.plugin(encrypt, {
+	secret: process.env.SECRET,
+	encryptedFields: ["password"],
+});
 //==MOdel(collection)
 const User = mongoose.model("User", userSchema);
 
