@@ -3,7 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
-const encrypt = require("mongoose-encryption");
+const md5 = require("md5");
 let port = process.env.PORT || 3000;
 const app = express();
 //ejs- use ejs as view engine
@@ -22,13 +22,6 @@ const userSchema = new mongoose.Schema({
 	email: String,
 	password: String,
 });
-//Mongoose Encryption
-//add the plugin to the userschema
-//encryped field only encrypts password so we dont have trouble looking up email
-userSchema.plugin(encrypt, {
-	secret: process.env.SECRET,
-	encryptedFields: ["password"],
-});
 //==MOdel(collection)
 const User = mongoose.model("User", userSchema);
 
@@ -45,7 +38,8 @@ app
 	.post((req, res) => {
 		const newUser = new User({
 			email: req.body.username,
-			password: req.body.password,
+			password: md5(req.body.password),
+			//hashed pass
 		});
 		newUser.save((err) => {
 			if (!err) {
