@@ -58,7 +58,22 @@ app
 	.get((req, res) => {
 		res.render("register");
 	})
-	.post((req, res) => {});
+	.post((req, res) => {
+		User.register(
+			{ username: req.body.username },
+			req.body.password,
+			(err, user) => {
+				if (!err) {
+					passport.authenticate("local")(req, res, () => {
+						//since user registered direct them to secrets
+						res.redirect("/secrets");
+					});
+				} else {
+					console.log(err);
+				}
+			}
+		);
+	});
 //login page route
 app
 	.route("/login")
