@@ -56,9 +56,10 @@ passport.use(
 			clientSecret: process.env.CLIENT_SECRET,
 			callbackURL: "http://localhost:3000/auth/google/secrets",
 			//change to heroku later
-			userProfileURL: "https://googleapis.com/oauth2/v3/userinfo",
+			userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
 		},
 		function (accessToken, refreshToken, profile, cb) {
+			console.log(profile);
 			User.findOrCreate({ googleId: profile.id }, function (err, user) {
 				return cb(err, user);
 			});
@@ -76,11 +77,11 @@ app.get(
 );
 
 app.get(
-	"/auth/google/callback",
+	"/auth/google/secrets",
 	passport.authenticate("google", { failureRedirect: "/login" }),
 	function (req, res) {
-		// Successful authentication, redirect home.
-		res.redirect("/");
+		// Successful authentication, redirect secrets.
+		res.redirect("/secrets");
 	}
 );
 //register page route
