@@ -52,6 +52,7 @@ passport.deserializeUser(User.deserializeUser());
 app.route("/").get((req, res) => {
 	res.render("home");
 });
+
 //register page route
 app
 	.route("/register")
@@ -63,17 +64,26 @@ app
 			{ username: req.body.username },
 			req.body.password,
 			(err, user) => {
-				if (!err) {
+				if (err) {
+					console.log(err);
+					res.redirect("/register");
+				} else {
 					passport.authenticate("local")(req, res, () => {
 						//since user registered direct them to secrets
 						res.redirect("/secrets");
 					});
-				} else {
-					console.log(err);
 				}
 			}
 		);
 	});
+//Secrets page route
+app.route("/secrets").get((req, res) => {
+	if (req.isAuthenticated()) {
+		res.render("secrets");
+	} else {
+		res.redirect("/login");
+	}
+});
 //login page route
 app
 	.route("/login")
