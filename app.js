@@ -106,7 +106,11 @@ app
 			}
 		});
 	});
-
+//logout route
+app.route("/logout").get((req, res) => {
+	req.logOut();
+	res.redirect("/");
+});
 app.listen(port, () => {
 	console.log(`Server is up! Local Port: ${port}!`);
 });
