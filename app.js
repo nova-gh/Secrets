@@ -15,9 +15,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //static files from pub folder
 app.use(express.static("public"));
 //express-session
-
+app.use(
+	session({
+		secret: "Our little secret.",
+		resave: false,
+		saveUninitialized: true,
+		cookie: { secure: true },
+	})
+);
+//passport
+app.use(passport.initialize());
+app.use(passport.session());
 //==Mongoose Connection
-
 mongoose.connect(
 	"mongodb+srv://admin:admin413@cluster0.hgnmf.mongodb.net/userDB",
 	{ useNewUrlParser: true, useUnifiedTopology: true }
@@ -27,6 +36,7 @@ const userSchema = new mongoose.Schema({
 	email: String,
 	password: String,
 });
+userSchema.plugin(passportLocalMongoose);
 //==MOdel(collection)
 const User = mongoose.model("User", userSchema);
 
