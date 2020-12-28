@@ -31,14 +31,22 @@ mongoose.connect(
 	"mongodb+srv://admin:admin413@cluster0.hgnmf.mongodb.net/userDB",
 	{ useNewUrlParser: true, useUnifiedTopology: true }
 );
+mongoose.set("useCreateIndex", true);
 //==DB scehma
 const userSchema = new mongoose.Schema({
 	email: String,
 	password: String,
 });
+//passport Local mongoose
 userSchema.plugin(passportLocalMongoose);
+
 //==MOdel(collection)
 const User = mongoose.model("User", userSchema);
+//passport local mongoose strategy
+passport.use(User.createStrategy());
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 //home page route
 app.route("/").get((req, res) => {
