@@ -6,7 +6,8 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
-
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const findOrCreate = require("mongoose-findorcreate");
 let port = process.env.PORT || 3000;
 const app = express();
 //ejs- use ejs as view engine
@@ -38,6 +39,7 @@ const userSchema = new mongoose.Schema({
 });
 //passport Local mongoose
 userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(findOrCreate);
 
 //==MOdel(collection)
 const User = mongoose.model("User", userSchema);
@@ -46,7 +48,23 @@ passport.use(User.createStrategy());
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
+//Google Oauth strategy
+passport.use(
+	new GoogleStrategy(
+		{
+			clientID: process.env.CLIENT_ID,
+			clientSecret: process.env.CLIENT_SECRET,
+			callbackURL: "http://localhost:3000/auth/google/secrets",
+			//change to heroku later
+			userProfileURL: "https://googleapis.com/oauth2/v3/userinfo",
+		},
+		function (accessToken, refreshToken, profile, cb) {
+			User.findOrCreate({ googleId: profile.id }, function (err, user) {
+				return cb(err, user);
+			});
+		}
+	)
+);
 //home page route
 app.route("/").get((req, res) => {
 	res.render("home");
