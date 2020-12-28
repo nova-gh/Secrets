@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema({
 	email: String,
 	password: String,
 	googleId: String,
+	secret: String,
 });
 //passport Local mongoose
 userSchema.plugin(passportLocalMongoose);
@@ -116,11 +117,22 @@ app
 	});
 //Secrets page route
 app.route("/secrets").get((req, res) => {
-	if (req.isAuthenticated()) {
-		res.render("secrets");
-	} else {
-		res.redirect("/login");
-	}
+	//looks for all user in collection, pick out
+	User.find({ secret: { $ne: null } }, (err, foundUsers) => {
+		if (err) {
+			console.log(err);
+		} else {
+			if (foundUsers) {
+				res.render("secrets", { userWithSecrets: foundUsers });
+			}
+		}
+		console.log(err);
+	});
+	// if (req.isAuthenticated()) {
+	// 	res.render("secrets");
+	// } else {
+	// 	res.redirect("/login");
+	// }
 });
 //login page route
 app
@@ -149,6 +161,32 @@ app.route("/logout").get((req, res) => {
 	req.logOut();
 	res.redirect("/");
 });
+//secret submission
+app
+	.route("/submit")
+	.get((req, res) => {
+		if (req.isAuthenticated()) {
+			res.render("submit");
+		} else {
+			res.redirect("/login");
+		}
+	})
+	.post((req, res) => {
+		const inputSecret = req.body.secret;
+		console.log(req.user.id);
+		User.findById(req.user.id, (err, foundUser) => {
+			if (err) {
+				console.log(err);
+			} else {
+				if (foundUser) {
+					foundUser.secret = inputSecret;
+					foundUser.save(() => {
+						res.redirect("/secrets");
+					});
+				}
+			}
+		});
+	});
 app.listen(port, () => {
 	console.log(`Server is up! Local Port: ${port}!`);
 });
