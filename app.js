@@ -20,7 +20,6 @@ app.use(
 		secret: "Our little secret.",
 		resave: false,
 		saveUninitialized: true,
-		cookie: { secure: true },
 	})
 );
 //passport
